@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
-
-
 import streamlit as st
 import pandas as pd
-import os
 from io import BytesIO
 
 st.set_page_config(page_title="RESKU Missing in MD Status", layout="wide")
@@ -15,12 +11,19 @@ st.title("RESKU Missing in MD Status")
 
 # File uploaders
 st.sidebar.header("Upload Files")
-power_file = st.sidebar.file_uploader("Upload 'RESKU Missing in MD'File", type=["xlsx"])
+power_file = st.sidebar.file_uploader("Upload 'RESKU Missing in MD' File", type=["xlsx"])
 mapping_file = st.sidebar.file_uploader("Upload 'Mapping File'", type=["xlsx"])
 
 if power_file and mapping_file:
     df_power = pd.read_excel(power_file)
-    df_Mapping = pd.read_excel(mapping_file,sheet_name='Mapping')
+
+    try:
+        # Try reading specific sheet
+        df_Mapping = pd.read_excel(mapping_file, sheet_name='Mapping')
+    except ValueError:
+        # If 'Mapping' sheet not found, fallback to the first available sheet
+        st.warning("Sheet 'Mapping' not found. Loaded the first sheet instead.")
+        df_Mapping = pd.read_excel(mapping_file)
 
     def determine_status(row):
         match = df_Mapping[df_Mapping['RE SKU-Mapping file'] == row['RESKU']]
@@ -40,7 +43,7 @@ if power_file and mapping_file:
 
         return "Not Available in Mapping"
 
-    # Apply the function and create new column
+    # Apply the function and create a new column
     df_power['Status'] = df_power.apply(determine_status, axis=1)
 
     # Show the dataframe
@@ -62,10 +65,3 @@ if power_file and mapping_file:
     )
 else:
     st.info("Please upload both Excel files to begin.")
-
-
-# In[ ]:
-
-
-
-
