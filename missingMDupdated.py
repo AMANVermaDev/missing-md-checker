@@ -34,7 +34,7 @@ if power_file and mapping_file:
 
         if pd.notnull(m['Id']) and pd.notnull(m['SKU ID']):
             if m['Country'] == row['Country']:
-                return "Exist in PMD"
+                return "Newly Trained"
             else:
                 return "Not Available for this Country"
         elif pd.isnull(m['Id']) and pd.isnull(m['SKU ID']):
