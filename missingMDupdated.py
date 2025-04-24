@@ -21,6 +21,8 @@ mapping_file = st.sidebar.file_uploader("Upload 'Mapping File'", type=["xlsx"])
 if power_file and mapping_file:
     df_power = pd.read_excel(power_file)
     df_Mapping = pd.read_excel(mapping_file,sheet_name='Mapping')
+    df_Mapping['RE SKU-Mapping file'] = df_Mapping['RE SKU-Mapping file'].astype(str).str.strip()
+    df_power['RESKU'] = df_power['RESKU'].astype(str).str.strip()
 
     def determine_status(row):
         match = df_Mapping[df_Mapping['RE SKU-Mapping file'] == row['RESKU']]
